@@ -4,6 +4,17 @@ using namespace std;
 typedef tuple<int, int, int, double, double> problemParameters;
 typedef vector<vector<int>> SIJ;
 
+
+/* void printSol
+* Print solucion
+*/
+void printSol(vector<int> x){
+    for(auto i: x){
+        cout << i << ' ';
+    }
+}
+
+
 /* void printSIJ
 * Print de los parametros S_ij
 */
@@ -13,7 +24,6 @@ void printSIJ(SIJ x){
             cout << ij << ' ';
         cout << endl;
     }
-    cout << endl;
 }
 
 
@@ -51,13 +61,44 @@ double calculateCost(vector<problemParameters> params, vector<int> sol){
 }
 
 
-/* void readData
-* lee input desde stdin
+/* void generateInitialSolution
+* Genera una solucion inicial
 */
-void readData(int N_Planes, SIJ S_ij, vector<problemParameters> pP){
+void generateInitialSolution(vector<int> &solution, int size, vector<problemParameters> params){
+    
+    int diff, rng;
+    
+    for (int i = 0; i < size; i++)
+    {
+        diff = get<2>(params[i]) - get<0>(params[i]);
+
+        rng = rand() % diff + get<0>(params[i]);
+        solution.push_back(rng);
+    }
+}
+
+
+int main(int argc, char const *argv[])
+{
+    // variables
     int e,t,l;
     double g,h;
     int tmp;
+
+    // seed for rng
+    srand(123);
+
+    int N_Planes;
+    cin >> N_Planes;
+    
+    //solution
+    vector<int> solution;
+    
+    //problem parameters
+    vector<problemParameters> pP;
+    
+    // for each plane S_ij
+    SIJ S_ij;
 
     // initial data reading
     for (int i = 0; i < N_Planes; i++)
@@ -74,45 +115,13 @@ void readData(int N_Planes, SIJ S_ij, vector<problemParameters> pP){
         S_ij.push_back(S_ij_temp);
         pP.push_back(tmpTuple);
     }
-}
-
-
-/* void generateInitialSolution
-* Genera una solucion inicial
-*/
-void generateInitialSolution(vector<int> solution, int size, vector<problemParameters> params){
-
-}
-
-
-int main(int argc, char const *argv[])
-{
-    // seed for rng
-    srand(123);
-
-    int N_Planes;
-    cin >> N_Planes;
-    
-    //solution
-    vector<int> solution;
-    
-    //problem parameters
-    vector<problemParameters> pP;
-    
-    // for each plane S_ij
-    SIJ S_ij;
-
-    // data reading
-    readData(N_Planes, S_ij, pP);
 
     // initial solution
     generateInitialSolution(solution, N_Planes, pP);
-    
+    printSol(solution);
     
     printSIJ(S_ij);
     printPP(pP);
-
-    printf("%ld\n", solution.size());
 
     return 0;
 }
