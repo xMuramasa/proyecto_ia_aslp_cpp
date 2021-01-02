@@ -11,6 +11,7 @@ typedef tuple<int, int, int, double, double> problemParameters;
 // matriz de separacion de llegadas de aviones
 typedef vector<vector<int>> SIJ;
 
+
 /* void printSol
 * 
 * Descripcion: 
@@ -53,6 +54,22 @@ void printSIJ(SIJ x);
 void printPP(vector<problemParameters> x);
 
 
+/* bool isFeasible
+* 
+* Descripcion: 
+*       indica si una solucion es factible
+*
+* Input:
+*       vector<problemParameters> params: parametros ideales y costos de cada avion
+*       SIJ sij: matriz de separaciones entre aviones
+*       vector<int> sol: vector solucion
+*
+* Retorna:
+*       bool: si una solucion es factible retorna true, de lo contrario false
+*/
+bool isFeasible(vector<problemParameters> params, SIJ Sij, vector<int> sol);
+
+
 /* double calculateCost
 * 
 * Descripcion: 
@@ -60,12 +77,13 @@ void printPP(vector<problemParameters> x);
 *
 * Input:
 *       vector<problemParameters> params: parametros ideales y costos de cada avion
+*       SIJ sij: matriz de separaciones entre aviones
 *       vector<int> sol: vector a asignar solucion aleatoria
 *
 * Retorna:
 *       double z: el costo de la solucion
 */
-double calculateCost(vector<problemParameters> params, vector<int> sol);
+double calculateCost(vector<problemParameters> params,  SIJ Sij, vector<int> sol);
 
 
 /* void generateInitialSolution
@@ -84,7 +102,26 @@ double calculateCost(vector<problemParameters> params, vector<int> sol);
 void generateInitialSolution(vector<int> &sol, vector<problemParameters> params, int N_Planes);
 
 
-/* vector<int> hillClimb_FirstImprovement
+/* void generateNeighbor
+*
+* Descripcion: 
+*       Genera un vecino de v. Se genera neighbor
+*
+* Input:
+*       vector<int> v: vector del que se obtiene un vecino
+*       int vSize: tamano de v
+*       vector<int> neighbor: vecino de v
+*       vector<problemParameters> params: parametros ideales y costos de cada avion
+*       SIJ sij: matriz de separaciones entre aviones
+*       int N_Planes: cantidad total de aviones
+*
+* Retorna:
+*       nada
+*/
+void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<problemParameters> params, SIJ sij);
+
+
+/* void hillClimb_FirstImprovement
 *
 * Descripcion: 
 *       resuelve el problema de alsp usando el algoritmo de hill-climb first improvement con restart
@@ -97,8 +134,8 @@ void generateInitialSolution(vector<int> &sol, vector<problemParameters> params,
 *       unsigned int MAX_NEIGHBORS: cantidad maxima de vecinos permitidos en un vecindario
 *
 * Retorna:
-*       nada
+*       unsigned int t: cantidad de vecindarios revisados
 */
-void hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> solution, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS);
+unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS);
 
 #endif

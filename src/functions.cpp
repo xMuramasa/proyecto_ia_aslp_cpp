@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "../include/headerFile.h"
+#include "include/headerFile.h"
 
 using namespace std;
 
@@ -37,23 +37,66 @@ void printPP(vector<problemParameters> x){
 }
 
 
-double calculateCost(vector<problemParameters> params, vector<int> sol){
-    double z;
-    int alpha_i, beta_i;
-    int T_i, x_i;
+bool isFeasible(vector<problemParameters> params, SIJ Sij, vector<int> sol){
 
-    for (int i = 0; i < sol.size(); i++)
-    {
+    int count = sol.size();
+    int desf = 0;
+    int diff = 0;
 
-        T_i = get<1>(params[i]);
-        x_i = sol[i];
+    if (count == 0) return false;
 
-        alpha_i = max({0, x_i - T_i});
-        beta_i = max({0, T_i - x_i});
+    for (int i = 0; i < count; i++){
+        // fuera del dominio
+        if( (sol[i] < get<1>(params[i])) || (get<2>(params[i]) < sol[i]) ) return false; 
 
-        z = z + alpha_i + beta_i;
+        for (int j = 0; j < count; j++)
+        {
+            if ( i != j) {
+
+                desf = sol[i] + Sij[i][j];
+                diff = abs(sol[i] - sol[j]);
+
+                // fuera del dominio
+                if( (desf < get<1>(params[i])) || (get<2>(params[i]) < desf) ) return false; 
+
+                // no cumple restriccion de matriz
+                if ( diff < Sij[i][j]) return false;
+                
+            }
+        }
     }
 
+    return true;
+}
+
+
+double calculateCost(vector<problemParameters> params, SIJ Sij, vector<int> sol){
+    
+    long double z = 9999999;
+    
+    int T_i, x_i;
+    int alpha_i, beta_i;
+    double g_i, h_i;
+
+    bool flag = isFeasible(params, Sij, sol);
+
+    if (flag){
+        z = 0;
+        for (int i = 0; i < sol.size(); i++)
+        {
+            T_i = get<1>(params[i]);
+            x_i = sol[i];
+
+            g_i = get<3>(params[i]);
+            h_i = get<4>(params[i]);
+
+            alpha_i = max({0, x_i - T_i});
+            beta_i = max({0, T_i - x_i});
+
+            z = z + alpha_i * g_i + beta_i * h_i;
+        }
+    }
+    //cout << "z " << z << endl;
     return z;
 }
 
@@ -61,6 +104,10 @@ double calculateCost(vector<problemParameters> params, vector<int> sol){
 void generateInitialSolution(vector<int> &sol, vector<problemParameters> params, int N_Planes){
     
     int diff, rng;
+
+    if(sol.size() != 0){
+        sol.clear();
+    }
     
     for (int i = 0; i < N_Planes; i++)
     {
@@ -72,42 +119,84 @@ void generateInitialSolution(vector<int> &sol, vector<problemParameters> params,
 }
 
 
-void hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> solution, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS){
+void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<problemParameters> params, SIJ sij){
+
+    int randPos = rand() % vSize;
+    int variation = 0;
+    int diff = 0;
+    int i = 0;
+
+    if(neighbor.size() != 0){
+        neighbor.clear();
+    }
+
+    //cout << "vSize "<< vSize << endl;
+
+    for ( i = 0; i < vSize; i++){   
+        if(randPos != i){
+            neighbor.push_back(v[i]);
+            //cout << " after simple push " << endl;
+
+        }else{
+            diff = get<2>(params[i]) - get<0>(params[i]);
+            variation = rand() % diff + get<0>(params[i]);
+            //printf("else new neighbor: diff %d, var %d\n", diff, variation);
+
+            neighbor.push_back(variation);
+
+            //cout << " after hard push " << endl;
+        }
+    }
+    //cout << "i " << i << endl;
+}
+
+
+unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS){
 
     unsigned int t = 0;
 
-    //s_best = solution
+    bool local;
     
-    bool local = false;
-
+    //s_best -> solution
     vector<int> sc;
     vector<int> sn_prime;
 
     do
     {
+        local = false;
+        //cout << " do1 " << endl;
         generateInitialSolution(sc, params, N_Planes);
 
         unsigned int neighbor = 0;
 
         do
         {
-            //generateNeighbor(sn_prime, sc, sij, params);
+            //cout << " do2 - "<< neighbor << endl;
+
+            generateNeighbor(sc, N_Planes, sn_prime, params, sij);
             neighbor++;
+            //cout << " neighbor++ " << endl;
             
-            if(calculateCost(params, sn_prime) <= calculateCost(params, sc)){
+            if(calculateCost(params, sij, sn_prime) <= calculateCost(params, sij, sc)){
+                //cout << " cost " << endl;
                 sc = sn_prime;
                 neighbor = 0;
 
             }if(neighbor == MAX_NEIGHBORS){
                 local =  true;
+                //cout << " local " << endl;
             }
+            //cout << " bottom while " << endl;
+            
         } while (!local);
         
         t++;
 
-        if(calculateCost(params, sc) <= calculateCost(params, solution)){
-            solution = sc;
+        if(calculateCost(params, sij, sc) <= calculateCost(params, sij, sol)){
+            sol = sc;
         }
 
     } while (t != T_MAX);    
+
+    return t;
 }
