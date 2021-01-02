@@ -18,15 +18,21 @@ unsigned int T_MAX = 1000;
 unsigned int MAX_NEIGHBORS = 500;
 
 
+//timeee
+time_t start, stop;
+
+
 // CTRL-C handler de tutorialspoint.com
 // Define the function to be called when ctrl-c (SIGINT) is sent to process
 void signal_callback_handler(int signum) {
-   cout << endl << "CTRL-C detectado, signum=" << signum << endl;
-   cout << endl << "La solucion actual es:" << endl;
-   printSol(solution);
-   cout << "Con un costo de: " << calculateCost(pP, S_ij, solution) << endl << endl;
-   // Terminate program
-   exit(signum);
+    cout << endl << "CTRL-C detectado, signum=" << signum << endl;
+    cout << endl << "La solucion actual es:" << endl;
+    printSol(solution);
+    time(&stop);
+    cout << "Con un costo de: " << calculateCost(pP, S_ij, solution) << endl << endl;
+    cout << "tiempo de ejecucion: " << stop-start << " segundos" << endl << endl;
+    // Terminate program
+    exit(signum);
 }
 
 
@@ -42,6 +48,19 @@ int main(int argc, char const *argv[])
 
     signal(SIGINT, signal_callback_handler);
 
+    int seed = 123;
+
+    if(argc > 2){
+        MAX_NEIGHBORS = atoi(argv[1]);
+        T_MAX = atoi(argv[2]);
+        seed = atoi(argv[3]);
+
+    }
+    cout << endl << "Args de entrada" << endl;
+    cout << "SEED: " << seed << endl;
+    cout << "T_MAX: " << T_MAX << endl;
+    cout << "MAX_NEIGHBORS: " << MAX_NEIGHBORS << endl;
+
 
     // variables
     int e,t,l;
@@ -51,7 +70,7 @@ int main(int argc, char const *argv[])
     // seed for rng
     // seed = 314 lmao
     //srand(314);
-    srand(123);
+    srand(seed);
 
     // lectura de datos
     // cantidad de aviones
@@ -74,12 +93,13 @@ int main(int argc, char const *argv[])
         pP.push_back(tmpTuple);
     }
 
-
+    time(&start);
     hillClimb_FirstImprovement(pP, S_ij, solution, N_Planes, T_MAX, MAX_NEIGHBORS);
-      
+    time(&stop);
     cout << endl << "La solucion actual es:" << endl;
     printSol(solution);
     cout << "Con un costo de: " << calculateCost(pP, S_ij, solution) << endl << endl;
+    cout << "tiempo de ejecucion: " << stop-start << " segundos" << endl << endl;
 
     return 0;
 }

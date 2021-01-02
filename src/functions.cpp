@@ -96,7 +96,6 @@ double calculateCost(vector<problemParameters> params, SIJ Sij, vector<int> sol)
             z = z + alpha_i * g_i + beta_i * h_i;
         }
     }
-    //cout << "z " << z << endl;
     return z;
 }
 
@@ -130,24 +129,17 @@ void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<pr
         neighbor.clear();
     }
 
-    //cout << "vSize "<< vSize << endl;
-
     for ( i = 0; i < vSize; i++){   
         if(randPos != i){
             neighbor.push_back(v[i]);
-            //cout << " after simple push " << endl;
 
         }else{
             diff = get<2>(params[i]) - get<0>(params[i]);
             variation = rand() % diff + get<0>(params[i]);
-            //printf("else new neighbor: diff %d, var %d\n", diff, variation);
 
             neighbor.push_back(variation);
-
-            //cout << " after hard push " << endl;
         }
     }
-    //cout << "i " << i << endl;
 }
 
 
@@ -164,35 +156,28 @@ unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ si
     do
     {
         local = false;
-        //cout << " do1 " << endl;
         generateInitialSolution(sc, params, N_Planes);
 
         unsigned int neighbor = 0;
 
         do
         {
-            //cout << " do2 - "<< neighbor << endl;
-
             generateNeighbor(sc, N_Planes, sn_prime, params, sij);
             neighbor++;
-            //cout << " neighbor++ " << endl;
             
-            if(calculateCost(params, sij, sn_prime) <= calculateCost(params, sij, sc)){
-                //cout << " cost " << endl;
+            if(calculateCost(params, sij, sn_prime) < calculateCost(params, sij, sc)){
                 sc = sn_prime;
                 neighbor = 0;
 
             }if(neighbor == MAX_NEIGHBORS){
                 local =  true;
-                //cout << " local " << endl;
             }
-            //cout << " bottom while " << endl;
             
         } while (!local);
         
         t++;
 
-        if(calculateCost(params, sij, sc) <= calculateCost(params, sij, sol)){
+        if(calculateCost(params, sij, sc) < calculateCost(params, sij, sol)){
             sol = sc;
         }
 
