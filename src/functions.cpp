@@ -71,8 +71,8 @@ bool isFeasible(vector<problemParameters> params, SIJ Sij, vector<int> sol){
 
 
 double calculateCost(vector<problemParameters> params, SIJ Sij, vector<int> sol){
-    
-    long double z = 9999999;
+   
+    double z = 9999999;
     
     int T_i, x_i;
     int alpha_i, beta_i;
@@ -111,45 +111,53 @@ void generateInitialSolution(vector<int> &sol, vector<problemParameters> params,
     for (int i = 0; i < N_Planes; i++)
     {
         diff = get<2>(params[i]) - get<0>(params[i]);
-
+        
+        if (diff == 0) {
+            sol.push_back(0);
+            continue;
+        }
         rng = rand() % diff + get<0>(params[i]);
         sol.push_back(rng);
     }
 }
 
 
-void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<problemParameters> params, SIJ sij){
+void generateneighbour(vector<int> v, int vSize, vector<int> &neighbour, vector<problemParameters> params, SIJ sij){
 
     int randPos = rand() % vSize;
     int variation = 0;
     int diff = 0;
     int i = 0;
 
-    if(neighbor.size() != 0){
-        neighbor.clear();
+    if(neighbour.size() != 0){
+        neighbour.clear();
     }
 
     for ( i = 0; i < vSize; i++){   
         if(randPos != i){
-            neighbor.push_back(v[i]);
+            neighbour.push_back(v[i]);
 
         }else{
             diff = get<2>(params[i]) - get<0>(params[i]);
-            variation = rand() % diff + get<0>(params[i]);
 
-            neighbor.push_back(variation);
+            if (diff == 0) {
+                neighbour.push_back(0);
+                continue;
+            }
+            variation = rand() % diff + get<0>(params[i]);
+            neighbour.push_back(variation);
         }
     }
 }
 
 
-unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS){
+unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_neighbourS){
 
     unsigned int t = 0;
 
     bool local;
     
-    //s_best -> solution
+    generateInitialSolution(sol, params, N_Planes);
     vector<int> sc;
     vector<int> sn_prime;
 
@@ -158,18 +166,17 @@ unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ si
         local = false;
         generateInitialSolution(sc, params, N_Planes);
 
-        unsigned int neighbor = 0;
+        unsigned int neighbour = 0;
 
         do
         {
-            generateNeighbor(sc, N_Planes, sn_prime, params, sij);
-            neighbor++;
-            
+            generateneighbour(sc, N_Planes, sn_prime, params, sij);
+            neighbour++;
             if(calculateCost(params, sij, sn_prime) < calculateCost(params, sij, sc)){
                 sc = sn_prime;
-                neighbor = 0;
+                neighbour = 0;
 
-            }if(neighbor == MAX_NEIGHBORS){
+            }if(neighbour == MAX_neighbourS){
                 local =  true;
             }
             

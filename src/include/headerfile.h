@@ -102,15 +102,15 @@ double calculateCost(vector<problemParameters> params,  SIJ Sij, vector<int> sol
 void generateInitialSolution(vector<int> &sol, vector<problemParameters> params, int N_Planes);
 
 
-/* void generateNeighbor
+/* void generateneighbour
 *
 * Descripcion: 
-*       Genera un vecino de v. Se genera neighbor
+*       Genera un vecino de v. Se genera neighbour
 *
 * Input:
 *       vector<int> v: vector del que se obtiene un vecino
 *       int vSize: tamano de v
-*       vector<int> neighbor: vecino de v
+*       vector<int> neighbour: vecino de v
 *       vector<problemParameters> params: parametros ideales y costos de cada avion
 *       SIJ sij: matriz de separaciones entre aviones
 *       int N_Planes: cantidad total de aviones
@@ -118,7 +118,7 @@ void generateInitialSolution(vector<int> &sol, vector<problemParameters> params,
 * Retorna:
 *       nada
 */
-void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<problemParameters> params, SIJ sij);
+void generateneighbour(vector<int> v, int vSize, vector<int> &neighbour, vector<problemParameters> params, SIJ sij);
 
 
 /* void hillClimb_FirstImprovement
@@ -131,11 +131,11 @@ void generateNeighbor(vector<int> v, int vSize, vector<int> &neighbor, vector<pr
 *       SIJ sij: matriz de separaciones entre aviones
 *       int N_Planes: cantidad total de aviones
 *       unsigned int T_MAX: tiempo maximo de ejecucion del algoritmo
-*       unsigned int MAX_NEIGHBORS: cantidad maxima de vecinos permitidos en un vecindario
+*       unsigned int MAX_neighbourS: cantidad maxima de vecinos permitidos en un vecindario
 *
 * Retorna:
 *       unsigned int t: cantidad de vecindarios revisados
 */
-unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_NEIGHBORS);
+unsigned int hillClimb_FirstImprovement(vector<problemParameters> params, SIJ sij, vector<int> &sol, int N_Planes, unsigned int T_MAX, unsigned int MAX_neighbourS);
 
 #endif

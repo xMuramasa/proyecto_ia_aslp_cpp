@@ -7,6 +7,13 @@ using namespace std;
 //solution
 vector<int> solution;
 
+// tupla de parametros del problema: E_i T_i L_i g h
+typedef tuple<int, int, int, double, double> problemParameters;
+
+// matriz de separacion de llegadas de aviones
+typedef vector<vector<int>> SIJ;
+
+
 //problem parameters
 vector<problemParameters> pP;
 
@@ -15,7 +22,7 @@ SIJ S_ij;
 
 // varibales necesarias para hill-climbing
 unsigned int T_MAX = 1000;
-unsigned int MAX_NEIGHBORS = 500;
+unsigned int MAX_NEIGHBOURS = 500;
 
 
 //timeee
@@ -29,18 +36,12 @@ void signal_callback_handler(int signum) {
     cout << endl << "La solucion actual es:" << endl;
     printSol(solution);
     time(&stop);
+    
     cout << "Con un costo de: " << calculateCost(pP, S_ij, solution) << endl << endl;
     cout << "tiempo de ejecucion: " << stop-start << " segundos" << endl << endl;
     // Terminate program
     exit(signum);
 }
-
-
-// tupla de parametros del problema: E_i T_i L_i g h
-typedef tuple<int, int, int, double, double> problemParameters;
-
-// matriz de separacion de llegadas de aviones
-typedef vector<vector<int>> SIJ;
 
 
 int main(int argc, char const *argv[])
@@ -51,7 +52,7 @@ int main(int argc, char const *argv[])
     int seed = 123;
 
     if(argc > 2){
-        MAX_NEIGHBORS = atoi(argv[1]);
+        MAX_NEIGHBOURS = atoi(argv[1]);
         T_MAX = atoi(argv[2]);
         seed = atoi(argv[3]);
 
@@ -59,7 +60,7 @@ int main(int argc, char const *argv[])
     cout << endl << "Args de entrada" << endl;
     cout << "SEED: " << seed << endl;
     cout << "T_MAX: " << T_MAX << endl;
-    cout << "MAX_NEIGHBORS: " << MAX_NEIGHBORS << endl;
+    cout << "MAX_NEIGHBOURS: " << MAX_NEIGHBOURS << endl;
 
 
     // variables
@@ -94,10 +95,11 @@ int main(int argc, char const *argv[])
     }
 
     time(&start);
-    hillClimb_FirstImprovement(pP, S_ij, solution, N_Planes, T_MAX, MAX_NEIGHBORS);
+    hillClimb_FirstImprovement(pP, S_ij, solution, N_Planes, T_MAX, MAX_NEIGHBOURS);
     time(&stop);
     cout << endl << "La solucion actual es:" << endl;
     printSol(solution);
+
     cout << "Con un costo de: " << calculateCost(pP, S_ij, solution) << endl << endl;
     cout << "tiempo de ejecucion: " << stop-start << " segundos" << endl << endl;
 

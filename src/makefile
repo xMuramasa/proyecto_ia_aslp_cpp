@@ -2,7 +2,7 @@ CPP=g++
 
 nInstancia= 1
 
-MAX_NEIGHBORS=500
+MAX_NEIGHBOURS=500
 T_MAX=1000
 SEED=123
 
@@ -13,4 +13,4 @@ clean:
 	rm -rf obj/*
 
 run:
-	./obj/out $(MAX_NEIGHBORS) $(T_MAX) $(SEED) < ../Instancias_ALSP/Txt/airland$(nInstancia).txt
+	./obj/out $(MAX_NEIGHBOURS) $(T_MAX) $(SEED) < ../Instancias_ALSP/Txt/airland$(nInstancia).txt
